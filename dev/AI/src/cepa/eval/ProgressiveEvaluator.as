@@ -4,24 +4,31 @@ package cepa.eval
 	import cepa.ai.AIConstants;
 	import cepa.ai.IEvaluation;
 	import cepa.ai.IPlayInstance;
-	import cepa.scorm.CmiConstants;
-	import cepa.scorm.ScormHandler;
 	import com.adobe.serialization.json.JSON;
 	import com.adobe.serialization.json.JSONEncoder;
-	import com.pipwerks.SCORM;
 	
 	/**
 	 * ...
 	 * @author Arthur
 	 */
+	
+
+
 	public class ProgressiveEvaluator implements IEvaluation 
 	{
 		private var _playInstances:Vector.<IPlayInstance> = new Vector.<IPlayInstance>();
-		private var ai:AI;
+		private var _instancesDetails:Vector.<Object> = new Vector.<Object>();
 		private var _minimumScoreForAcceptance:Number = 0.75;
 		private var _minimumTrialsForParticipScore:int = 5;
+		private var _playmode:int = AIConstants.PLAYMODE_FREEPLAY;
 
-
+		private var ai:AI;
+		
+		public function ProgressiveEvaluator(ai:AI)
+		{
+			this.ai = ai;
+		}
+			
 		/**
 		 * Returns total amount of trials
 		 */
@@ -35,7 +42,7 @@ package cepa.eval
 		public function numTrialsByMode(mode:int):int {
 			var i:int = 0;
 			for (var j:int = 0; j < playInstances.length; j++) {
-				i += (playInstances[j].playMode==mode?1:0);
+				i += (instancesDetails[j].playMode==mode?1:0);
 			}
 			return i;
 		}
@@ -68,7 +75,7 @@ package cepa.eval
 			var scoreSum:Number = 0;
 			var cases:int = 0;
 			for (var j:int = 0; j < playInstances.length; j++) {
-				if(playInstances[j].playMode==AIConstants.PLAYMODE_EVALUATE){
+				if(instancesDetails[j].playMode==AIConstants.PLAYMODE_EVALUATE){
 					cases++;
 					scoreSum += playInstances[j].getScore();
 				}
@@ -79,11 +86,7 @@ package cepa.eval
 		
 	
 		
-		public function ProgressiveEvaluator(ai:AI)
-		{
-			this.ai = ai;
 
-		}
 		
 		/* INTERFACE cepa.ai.IEvaluation */
 		
@@ -91,11 +94,9 @@ package cepa.eval
 		 * Depois que um exercício for realizado, ele entrará nessa pilha. Neste momento, o avaliador deverá persistir os dados no scorm
 		 * @param	playInstance 
 		 */
-		public function addPlayInstance(play:IPlayInstance) 
+		public function evaluate(play:IPlayInstance) 
 		{
 			playInstances.push(play);
-			saveScorm(play)
-			
 		}
 		
 		/* INTERFACE cepa.ai.IEvaluation */
@@ -103,10 +104,14 @@ package cepa.eval
 		public function getData():Object 
 		{
 			
-			var obj:Object = new Object();
+			var obj:Object = new Object();			
+			obj.playinstances = new Object();
+			obj.playinstancesdetails = new Object();
 			obj.length = playInstances.length;
+
 			for (var i:int = 0; i < playInstances.length; i++) {
-				obj[String(i)] = playInstances[i].returnAsObject();
+				obj.playinstances[String(i)] = playInstances[i].returnAsObject();
+				obj.playinstancesdetails[String(i)] = instancesDetails[i];
 			}
 			return obj;
 		}
@@ -115,21 +120,17 @@ package cepa.eval
 		public function readData(obj:Object) 
 		{
 			this.playInstances = new Vector.<IPlayInstance>();
+			this.instancesDetails = new Vector.<Object>();
 			
 			try {
 				var len:int = obj.length;
-				
-				ai.debugScreen.msg("carregou: " + len.toString());
 				for (var i:int = 0; i < len; i++) {
-					var ply:IPlayInstance = ai.ai_instance.createNewPlayInstance()
-					
-					//ai.debugScreen.msg(JSON.encode(b[i]));
-					ply.bind(obj[i.toString()]);
+					var ply:IPlayInstance = ai.createPlayInstance();
+					ply.bind(obj.playinstances[i.toString()]);
 					playInstances.push(ply);
-					//a.push(playInstances[i].returnAsObject);
+					instancesDetails.push(obj.playinstancesdetails[i.toString()]);
 				}				
-				ai.debugScreen.msg("leu plays: " + i.toString())
-				} catch (e:Error) {
+			} catch (e:Error) {
 				ai.debugScreen.msg("Não é um objeto")
 				ai.debugScreen.msg(e.getStackTrace())
 				ai.debugScreen.msg(e.message)
@@ -137,64 +138,7 @@ package cepa.eval
 			}
 			
 		}
-		private function saveScorm(play:IPlayInstance):void 
-		{	
-			ai.debugScreen.msg("================saveScorm()==================\n")
-			
-			ai.saveSuspendData();
-			if (!ai.scorm.scormConnected) {
-				ai.debugScreen.msg("Scorm não conectado, saindo.")				
-				return;
-			}
-			
-			ai.debugScreen.msg("Exit = suspend")				
-			ai.scorm.cmi.exit = CmiConstants.EXIT_SUSPEND;
-			ai.scorm.save();
-			ai.debugScreen.msg("Saved")
-			if (play.playMode == AIConstants.PLAYMODE_EVALUATE) {
-				ai.debugScreen.msg("PlayMode = evaluate")
-				/*
-				 *  Quando o usuário terminar de responder todos os cinco exercícios requeridos, no modo de avaliação, 
-				 * fazer cmi.completion_status = “completed” e cmi.progress_measure = 1, indicando que a atividade foi concluída. 
-				 */
-				if (numTrialsByMode(AIConstants.PLAYMODE_EVALUATE) >= minimumTrialsForParticipScore) {
-					ai.debugScreen.msg("chegou a " + minimumTrialsForParticipScore + " tentativas, vai mudar status pra complete")
-					ai.scorm.cmi.progress_measure = 1;	
-					ai.scorm.cmi.completion_status = CmiConstants.COMPLETION_STATUS_COMPLETE;
-					ai.debugScreen.msg("ai.scorm.scorm.set(\"completion_status\", \"complete\")");
-					ai.scorm.scorm.set("completion_status", "complete");
-					
-				} else {
-					ai.debugScreen.msg("ainda não atingiu " + minimumTrialsForParticipScore + " tentativas, apenas " + numTrialsByMode(AIConstants.PLAYMODE_EVALUATE))
-				}
-				var scr:Number = score;
-				ai.scorm.cmi.score.raw = parseFloat(Number(scr * 100).toFixed());
-				ai.scorm.cmi.score.scaled = parseFloat(Number(scr).toFixed(2));
-				ai.debugScreen.msg("ai.scorm.cmi.score.raw <= " + ai.scorm.cmi.score.raw );
-				
-				
-				/*
-				 * No caso desta AI, quando o usuário atingir pontuação igual ou superior a PASSING_SCORE (= 75%, para começar), 
-				 * fazer cmi.success_status = “passed”, sinalizando para o LMS que ele foi aprovado na AI. 
-				 * Caso contrário, fazer cm.success_status = “failed”. obs.: para o PASSING_SCORE de 75%, pode-se concluir que o usuário precisa obter uma média aritmética dos exercícios igual ou superior a 0,5 (50%), em modo de avaliação, para passar, considerando que ele tenha feito a quantidade mínima de exercícios requerida (cinco, nesta AI).
-				 */
-				if (scr >= minimumScoreForAcceptance) {
-					ai.scorm.cmi.success_status	= CmiConstants.SUCCESS_STATUS_PASSED;
-					ai.debugScreen.msg("score maior do que o mínimo, salvando cmi.success_status <= passed")
-				} else {
-					ai.scorm.cmi.success_status = CmiConstants.SUCCESS_STATUS_FAILED;
-					ai.debugScreen.msg("score menor do que o mínimo, salvando cmi.success_status <= failed")
-					
-				}
-				ai.scorm.save();
-				
-				//encodePlayInstances();
-			} else {
-				
-			}
-			
-			
-		}
+
 		
 		/* INTERFACE cepa.ai.IEvaluation */
 		
@@ -233,6 +177,26 @@ package cepa.eval
 		public function set minimumTrialsForParticipScore(value:int):void 
 		{
 			_minimumTrialsForParticipScore = value;
+		}
+		
+		public function get instancesDetails():Vector.<Object> 
+		{
+			return _instancesDetails;
+		}
+		
+		public function set instancesDetails(value:Vector.<Object>):void 
+		{
+			_instancesDetails = value;
+		}
+		
+		public function get playmode():int 
+		{
+			return _playmode;
+		}
+		
+		public function set playmode(value:int):void 
+		{
+			_playmode = value;
 		}
 		
 	}

@@ -19,13 +19,7 @@ package cepa.ai
 	 */
 	public class AIContainer extends Sprite
 	{
-		public static const SHADOW_FILTER:DropShadowFilter = new DropShadowFilter(3, 45, 0x000000, 1, 5, 5);
-		public static const DISABLE_FILTER:ColorMatrixFilter = new ColorMatrixFilter([
-                       0.2225, 0.7169, 0.0606, 0, 0,
-                       0.2225, 0.7169, 0.0606, 0, 0,
-                       0.2225, 0.7169, 0.0606, 0, 0,
-                       0.0000, 0.0000, 0.0000, 1, 0
-        ]);		
+
 		private var layerUI:Sprite = new Sprite();
 		private var ai:AI;
 		private var margin:int = 25;
@@ -53,7 +47,7 @@ package cepa.ai
 			try {
 				display.alpha = 0.5;
 				display.mouseEnabled = false;
-				display.filters = [DISABLE_FILTER];
+				display.filters = [AIConstants.DISABLE_FILTER];
 			} catch (e:Error) {
 				//nada
 				trace(e.getStackTrace());
@@ -71,6 +65,9 @@ package cepa.ai
 			}
 		}		
 		
+		/**
+		 * Coloca a moldura na atividade, acertando as bordas arredondadas de acordo com o tamanho dela.
+		 */
 		public function adjustBorder():void {
 			var b:Borda = new Borda();			
 			b.scale9Grid = new Rectangle(20, 20, b.width - 40, b.height - 40);
@@ -166,7 +163,7 @@ package cepa.ai
 			
 			// prepare option buttons
 			layerUI.addChild(optionButtons);
-			optionButtons.filters = [SHADOW_FILTER];
+			optionButtons.filters = [AIConstants.SHADOW_FILTER];
 			optionButtons.x = stage.stageWidth - margin - optionButtons.width;
 			optionButtons.y = stage.stageHeight - margin - optionButtons.height;			
 			makeButton(optionButtons.btTutorial);
@@ -211,9 +208,15 @@ package cepa.ai
 			// exibir mensagem quando passar mouse nos botoes do menu
 			
 			// mandar reset pros AI.observers.onResetClick e onTutorialClick
-			optionButtons.btTutorial.addEventListener(MouseEvent.CLICK, ai.onTutorialClick);
-			optionButtons.btReset.addEventListener(MouseEvent.CLICK, ai.onResetClick);
-			optionButtons.btStatistics.addEventListener(MouseEvent.CLICK, ai.onStatsClick);
+			optionButtons.btTutorial.addEventListener(MouseEvent.CLICK, function() {
+				ai.eventDispatcher.dispatchEvent(new AIEvent(AIEvent.TUTORIAL_CLICK, ai));
+			});
+			optionButtons.btReset.addEventListener(MouseEvent.CLICK, function() {
+				ai.eventDispatcher.dispatchEvent(new AIEvent(AIEvent.RESET_CLICK, ai));
+			});
+			optionButtons.btStatistics.addEventListener(MouseEvent.CLICK, function() {
+				ai.eventDispatcher.dispatchEvent(new AIEvent(AIEvent.STATS_CLICK, ai));
+			});
 		}
 		
 		

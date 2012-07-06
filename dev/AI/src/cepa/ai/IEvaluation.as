@@ -7,8 +7,7 @@ package cepa.ai
 	 */
 	public interface IEvaluation 
 	{
-		function addPlayInstance(playInstance:IPlayInstance);
-		function get score():Number;
+		function evaluate(playInstance:IPlayInstance);
 		function getData():Object;
 		function readData(obj:Object);
 	}
