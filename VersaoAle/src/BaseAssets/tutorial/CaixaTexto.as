@@ -42,8 +42,8 @@ package BaseAssets.tutorial
 		private var actualPosition:Point = new Point();
 		
 		private var hasNext:Boolean = true;
-		private var nextButton:NextButton;
-		private var closeButton:CloseButtonTuto;
+		private var nextButton:TutoNext;
+		private var closeButton:TutoClose;
 		private var textArray:Array;
 		private var currentWidth:Number = 200;
 		private var minWidth:Number;
@@ -68,8 +68,10 @@ package BaseAssets.tutorial
 			//texto.border = true;
 			addChild(texto);
 			
-			nextButton = new NextButton();
-			closeButton = new CloseButtonTuto();
+			nextButton = new TutoNext();
+			closeButton = new TutoClose();
+			nextButton.buttonMode = true;
+			closeButton.buttonMode = true;
 			addChild(nextButton);
 			addChild(closeButton);
 			if (roundCorner) minWidth = nextButton.width;

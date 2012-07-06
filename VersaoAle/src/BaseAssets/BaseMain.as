@@ -1,5 +1,6 @@
 package BaseAssets
 {
+	import BaseAssets.components.MenuBar;
 	import BaseAssets.screens.AboutScreen;
 	import BaseAssets.screens.FeedBackScreen;
 	import BaseAssets.screens.GlassPane;
@@ -29,7 +30,8 @@ package BaseAssets
 		/**
 		 * Menu com os botões.
 		 */
-		protected var botoes:Botoes;
+		//protected var botoes:Botoes;
+		protected var botoes:MenuBar;
 		
 		//Telas da atividade:
 		private var creditosScreen:AboutScreen;
@@ -42,7 +44,7 @@ package BaseAssets
 		/**
 		 * Atividade possui tela de desempenho?
 		 */
-		private var hasStats:Boolean = true;
+		private var hasStats:Boolean = false;
 		
 		/*
 		 * Filtro de conversão para tons de cinza.
@@ -77,7 +79,6 @@ package BaseAssets
 			
 			criaCamadas();
 			criaTelas();
-			adicionaListeners();
 			
 			init();
 		}
@@ -129,11 +130,15 @@ package BaseAssets
 				layerDialogo.addChild(statsScreen);
 			}
 			
-			botoes = new Botoes();
-			botoes.x = stage.stageWidth - botoes.width - 10;
-			botoes.y = stage.stageHeight - botoes.height - 10;
-			botoes.filters = [new DropShadowFilter(3, 45, 0x000000, 1, 5, 5)];
+			//botoes = new Botoes();
+			//botoes.x = stage.stageWidth - botoes.width - 10;
+			//botoes.y = stage.stageHeight - botoes.height - 10;
+			//botoes.filters = [new DropShadowFilter(3, 45, 0x000000, 1, 5, 5)];
+			botoes = new MenuBar();
+			botoes.x = stage.stageWidth - botoes.BTN_WIDTH - 10;
+			botoes.y = stage.stageHeight - 10;
 			layerMenu.addChild(botoes);
+			adicionaBotoes();
 			
 			bordaAtividade = new Borda();
 			MovieClip(bordaAtividade).scale9Grid = new Rectangle(20, 20, 610, 460);
@@ -142,43 +147,13 @@ package BaseAssets
 			layerBorda.addChild(bordaAtividade);
 		}
 		
-		/**
-		 * Adiciona os eventListeners nos botões.
-		 */
-		protected function adicionaListeners():void 
+		private function adicionaBotoes():void 
 		{
-			botoes.tutorialBtn.addEventListener(MouseEvent.CLICK, iniciaTutorial);
-			botoes.orientacoesBtn.addEventListener(MouseEvent.CLICK, openOrientacoes);
-			botoes.creditos.addEventListener(MouseEvent.CLICK, openCreditos);
-			botoes.resetButton.addEventListener(MouseEvent.CLICK, reset);
-			if (hasStats) {
-				botoes.btEstatisticas.addEventListener(MouseEvent.CLICK, openStats);
-			}else {
-				lock(botoes.btEstatisticas);
-			}
-			
-			createToolTips();
-		}
-		
-		/**
-		 * Cria os tooltips nos botões
-		 */
-		private function createToolTips():void 
-		{
-			var intTT:ToolTip = new ToolTip(botoes.tutorialBtn, "Reiniciar tutorial", 12, 0.8, 150, 0.6, 0.1);
-			var instTT:ToolTip = new ToolTip(botoes.orientacoesBtn, "Orientações", 12, 0.8, 100, 0.6, 0.1);
-			var resetTT:ToolTip = new ToolTip(botoes.resetButton, "Reiniciar", 12, 0.8, 100, 0.6, 0.1);
-			var infoTT:ToolTip = new ToolTip(botoes.creditos, "Créditos", 12, 0.8, 100, 0.6, 0.1);
-			
-			addChild(intTT);
-			addChild(instTT);
-			addChild(resetTT);
-			addChild(infoTT);
-			
-			if (hasStats) {
-				var statsTT:ToolTip = new ToolTip(botoes.btEstatisticas, "Desempenho", 12, 0.8, 100, 0.6, 0.1);
-				addChild(statsTT);
-			}
+			botoes.addButton(new CreditBtn(), openCreditos, "Licença e créditos");
+			botoes.addButton(new ResetBtn(), reset, "Reiniciar");
+			botoes.addButton(new InstructionBtn(), openOrientacoes, "Orientações");
+			botoes.addButton(new InfoBtn(), iniciaTutorial, "Reiniciar tutorial");
+			if(hasStats) botoes.addButton(new BtStats(), openStats, "Desempenho");
 		}
 		
 		protected function lock(bt:*):void

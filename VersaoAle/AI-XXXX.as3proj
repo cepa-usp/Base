@@ -51,6 +51,7 @@
   <!-- SWC Libraries -->
   <libraryPaths>
     <element path="src\lib\as3corelib.swc" />
+    <element path="src\lib\Botoes.swc" />
   </libraryPaths>
   <!-- External Libraries -->
   <externalLibraryPaths>
