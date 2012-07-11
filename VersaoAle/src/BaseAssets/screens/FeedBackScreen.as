@@ -1,5 +1,6 @@
 package BaseAssets.screens
 {
+	import BaseAssets.events.BaseEvent;
 	import com.eclecticdesignstudio.motion.Actuate;
 	import com.eclecticdesignstudio.motion.easing.Elastic;
 	import flash.display.MovieClip;
@@ -52,7 +53,7 @@ package BaseAssets.screens
 			Actuate.tween(glassPane, 0.4, { scaleX:0, scaleY:0 } );
 			Actuate.tween(this, 0.4, { scaleX:0, scaleY:0 } ).onComplete(turnInvisible);
 			if (e != null) {
-				if(e.target == okButton) dispatchEvent(new Event("OK", true));
+				if(e.target == okButton) dispatchEvent(new BaseEvent(BaseEvent.OK_SCREEN, true));
 			}
 		}
 		
@@ -60,6 +61,7 @@ package BaseAssets.screens
 		{
 			this.visible = false;
 			glassPane.visible = false;
+			dispatchEvent(new BaseEvent(BaseEvent.CLOSE_SCREEN, true));
 		}
 		
 		public function openScreen():void

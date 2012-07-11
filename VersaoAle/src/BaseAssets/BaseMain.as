@@ -30,7 +30,6 @@ package BaseAssets
 		/**
 		 * Menu com os botões.
 		 */
-		//protected var botoes:Botoes;
 		protected var botoes:MenuBar;
 		
 		//Telas da atividade:
@@ -130,10 +129,6 @@ package BaseAssets
 				layerDialogo.addChild(statsScreen);
 			}
 			
-			//botoes = new Botoes();
-			//botoes.x = stage.stageWidth - botoes.width - 10;
-			//botoes.y = stage.stageHeight - botoes.height - 10;
-			//botoes.filters = [new DropShadowFilter(3, 45, 0x000000, 1, 5, 5)];
 			botoes = new MenuBar();
 			botoes.x = stage.stageWidth - botoes.BTN_WIDTH - 10;
 			botoes.y = stage.stageHeight - 10;
