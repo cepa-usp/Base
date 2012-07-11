@@ -236,9 +236,9 @@ package cepa.ai
 		
 		override public function addChild(child:DisplayObject):DisplayObject 
 		{			
-			if (child is AIObserver) {
-				ai.addObserver(AIObserver(child));
-			}
+			//if (child is AIObserver) {
+				//ai.addObserver(AIObserver(child));
+			//}
 			var c:DisplayObject =  super.addChild(child);
 			setChildIndex(layerUI, numChildren - 1);
 			return c;

@@ -16,20 +16,20 @@
     </define>
     <define append="true">
       <name>CONFIG::timeStamp</name>
-      <value>'6/7/2012'</value>
+      <value>'11/7/2012'</value>
     </define>
     <verbose-stacktraces>true</verbose-stacktraces>
     <source-path append="true">
-      <path-element>C:\Documents and Settings\Arthur\Meus documentos\CEPA\dev\Framework\dev\AI\lib</path-element>
+      <path-element>C:\Documents and Settings\Arthur\Meus documentos\CEPA\GitHub\Base\dev\AI\lib</path-element>
       <path-element>C:\Arquivos de programas\FlashDevelop\Library\AS3\classes</path-element>
     </source-path>
     <library-path append="true">
-      <path-element>C:\Documents and Settings\Arthur\Meus documentos\CEPA\dev\Framework\dev\AI\lib\ui.swc</path-element>
-      <path-element>C:\Documents and Settings\Arthur\Meus documentos\CEPA\dev\Framework\dev\AI\lib\as3corelib.swc</path-element>
+      <path-element>C:\Documents and Settings\Arthur\Meus documentos\CEPA\GitHub\Base\dev\AI\lib\ui.swc</path-element>
+      <path-element>C:\Documents and Settings\Arthur\Meus documentos\CEPA\GitHub\Base\dev\AI\lib\as3corelib.swc</path-element>
     </library-path>
   </compiler>
   <file-specs>
-    <path-element>C:\Documents and Settings\Arthur\Meus documentos\CEPA\dev\Framework\dev\AI\src\Main.as</path-element>
+    <path-element>C:\Documents and Settings\Arthur\Meus documentos\CEPA\GitHub\Base\dev\AI\src\Main.as</path-element>
   </file-specs>
   <default-background-color>#FFFFFF</default-background-color>
   <default-frame-rate>30</default-frame-rate>

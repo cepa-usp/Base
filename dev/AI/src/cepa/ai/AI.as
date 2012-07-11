@@ -26,10 +26,12 @@ package cepa.ai
 		private var _eventDispatcher:EventDispatcher = new EventDispatcher();
 		private var _evaluator:IEvaluation;
 		private var _state:String = AIConstants.STATE_UNLOADED;
+		private var _currentPlay:IPlayInstance = null;
 		
 		private var _debugMode:Boolean = false;
 		private var _debugTutorial:Boolean = false;	
 		private var _debugScreen:AIDebug;
+		
 		
 		public function AI(stagesprite:Sprite) 
 		{			
@@ -42,19 +44,25 @@ package cepa.ai
 		}
 		
 		public function setState(state:String):void {			
-			this.state = state;
-			var ev:AIEvent = new AIEvent(AIConstants.CHANGESTATE, this);
+			this._state = state;
+			var ev:AIEvent = new AIEvent(state, this);
 			eventDispatcher.dispatchEvent(ev);
 		}		
 
 		public function initialize():void {
-			eventDispatcher.dispatchEvent(new Event(AIConstants.STATE_LOADING, this));
+			eventDispatcher.dispatchEvent(new AIEvent(AIConstants.STATE_LOADING, this));
 		}
 
 		public function createPlayInstance():IPlayInstance {
 			throw new Error("This method needs to be overriden")
 		}		
-	
+
+		
+		public function onAIStateChanged():void {
+			throw new Error("This method needs to be overriden")
+		}		
+		
+		
 		public function terminate():void {
 			eventDispatcher.dispatchEvent(new Event(AIConstants.STATE_TERMINATED, this));
 		}
@@ -104,12 +112,25 @@ package cepa.ai
 		
 		public function set state(value:String):void 
 		{
-			_state = value;
+			setState(value);
+		}
+		
+		/**
+		 * Serializa os dados da atividade e devolve em um Object
+		 * @return
+		 */
+		public function getData():Object {
+			throw new Error("You must override the 'getData' method ")
 		}
 		
 		
-		
-		
+		/**
+		 * 
+		 * @param	obj
+		 */
+		public function setData(obj:Object) {
+			throw new Error("You must override the 'setData' method ")
+		}
 		
 		
 		
@@ -153,6 +174,16 @@ package cepa.ai
 		public function set debugScreen(value:AIDebug):void 
 		{
 			_debugScreen = value;
+		}
+		
+		public function get currentPlay():IPlayInstance 
+		{
+			return _currentPlay;
+		}
+		
+		public function set currentPlay(value:IPlayInstance):void 
+		{
+			_currentPlay = value;
 		}
 		
 		

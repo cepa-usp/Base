@@ -2,6 +2,7 @@ package
 {
 	
 	import cepa.ai.AI;
+	import cepa.ai.AIConstants;
 	import cepa.ai.AIContainer;
 	import cepa.ai.AIObserver;
 	import cepa.dao.ScormAgent;
@@ -30,8 +31,8 @@ package
 			removeEventListener(Event.ADDED_TO_STAGE, init);
 			var ai:AtividadeTeste = new AtividadeTeste(this);
 			var eval:ProgressiveEvaluator = new ProgressiveEvaluator(ai);
-			var scormAgent:ScormAgent = new ScormAgent(ai); 
-			
+			var scormAgent:ScormAgent = new ScormAgent(ai, eval); 
+			ai.initialize();
 			
 		}
 		

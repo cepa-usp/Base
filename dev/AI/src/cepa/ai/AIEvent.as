@@ -8,6 +8,10 @@ package cepa.ai
 	 */
 	public class AIEvent extends Event 
 	{
+		static public const TUTORIAL_CLICK:String = "tutorialClick";
+		static public const RESET_CLICK:String = "resetClick";
+		static public const STATS_CLICK:String = "statsClick";
+		static public const REQUEST_INITIALIZE:String = "requestInitialize";
 		private var _ai:AI;
 		public function AIEvent(type:String, ai:AI, bubbles:Boolean=false, cancelable:Boolean=false) 
 		{ 
