@@ -13,22 +13,27 @@ package BaseAssets.components
 	public class MenuBar extends Sprite
 	{
 		public const BTN_WIDTH:Number = 44;
-		private const BTN_HEIGHT:Number = 40;
 		private const BTN_TWEEN_TIME:Number = 0.2;
+		private const HEIGHT_BORDER:Number = 3;
+		private const ROUND_RECT_ELIPSE:Number = 10;
+		
+		private var totalHeight:Number = 0;
+		private var overAnimated:Boolean = true;
+		private var doublInicialFinalBorder:Boolean = true;
 		
 		private var buttons:Vector.<Sprite> = new Vector.<Sprite>();
-		//private var background:Sprite = new Sprite();
-		private var background:MenuBarBackground;
+		private var background:Sprite;
 		
 		public function MenuBar() 
 		{
-			
+			if (doublInicialFinalBorder) totalHeight = HEIGHT_BORDER;
 		}
 		
 		public function addButton(spr:Sprite, func:Function, descricao:String = null):void
 		{
 			spr.x = BTN_WIDTH / 2;
-			spr.y = -((BTN_HEIGHT / 2) + buttons.length * BTN_HEIGHT);
+			spr.y = -totalHeight - HEIGHT_BORDER - spr.height / 2;
+			totalHeight += spr.height + 2 * HEIGHT_BORDER;
 			
 			buttons.push(spr);
 			makeButton(spr, func);
@@ -56,38 +61,29 @@ package BaseAssets.components
 		private function overBtn(e:MouseEvent):void 
 		{
 			var btn:Sprite = Sprite(e.target);
-			//btn.scaleX = btn.scaleY = 1.2;
-			Actuate.tween(btn, BTN_TWEEN_TIME, { scaleX:1.2, scaleY:1.2 } );
+			if (overAnimated) Actuate.tween(btn, BTN_TWEEN_TIME, { scaleX:1.2, scaleY:1.2 } );
+			else btn.scaleX = btn.scaleY = 1.2;
 		}
 		
 		private function outBtn(e:MouseEvent):void 
 		{
 			var btn:Sprite = Sprite(e.target);
-			//btn.scaleX = btn.scaleY = 1;
-			Actuate.tween(btn, BTN_TWEEN_TIME, { scaleX:1, scaleY:1 } );
+			if (overAnimated) Actuate.tween(btn, BTN_TWEEN_TIME, { scaleX:1, scaleY:1 } );
+			else btn.scaleX = btn.scaleY = 1;
 		}
 		
 		private function drawBackground():void 
 		{
 			if (background == null) {
-				background = new MenuBarBackground();
+				background = new Sprite();
 				background.filters = [new DropShadowFilter(3, 45, 0x000000, 1, 5, 5)];
 				addChild(background);
 				setChildIndex(background, 0);
-				//background.scale9Grid = new Rectangle(5, -BTN_HEIGHT + 10, BTN_WIDTH - 10, BTN_HEIGHT - 10);
 			}
 			
-			background.scaleY = buttons.length;
-			
-			//background.graphics.clear();
-			//background.graphics.beginFill(0xDBDBDB, 1);
-			//background.graphics.drawRoundRect(0, 0, BTN_WIDTH, -BTN_HEIGHT * buttons.length, 5, 5);
-			//background.graphics.drawRoundRectComplex(0, 0, BTN_WIDTH, -BTN_HEIGHT * buttons.length, 5, 5, 5, 5);
-			//background.graphics.drawRect(0, 0, BTN_WIDTH, -BTN_HEIGHT * buttons.length);
-			
-			//MovieClip(bordaAtividade).scale9Grid = new Rectangle(20, 20, 610, 460);
-			//MovieClip(bordaAtividade).scaleX = stage.stageWidth / 650;
-			//MovieClip(bordaAtividade).scaleY = stage.stageHeight / 500;
+			background.graphics.clear();
+			background.graphics.beginFill(0xDBDBDB, 1);
+			background.graphics.drawRoundRect(0, (doublInicialFinalBorder ? -totalHeight - HEIGHT_BORDER : -totalHeight), BTN_WIDTH, (doublInicialFinalBorder ? totalHeight + HEIGHT_BORDER : totalHeight), ROUND_RECT_ELIPSE, ROUND_RECT_ELIPSE);
 		}
 		
 	}
