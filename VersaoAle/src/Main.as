@@ -11,6 +11,12 @@ package
 	 */
 	public class Main extends BaseMain
 	{
+		var texts:Array = ["Precisávamos de uma área para registrar informações que pudessem ser acessadas via web por qualquer computador e por qualquer colaborador. Bem, o STOA é uma rede já existente, modelada e suportada pelo pessoal de ATP, acessível a qualquer  colaborador USP. O STOA foi, assim, uma escolha natural.",
+							"aughaiahuiah akjaolijan akjalçja akijaalihslah aiughsik",
+							"lahlahalhalaaç, apçjaan ",
+							""];
+							
+		private var pos:int = 0;
 		
 		public function Main() 
 		{
@@ -19,7 +25,14 @@ package
 		
 		override protected function init():void 
 		{
-			
+			stage.addEventListener(MouseEvent.CLICK, changeInfo);
+		}
+		
+		private function changeInfo(e:MouseEvent):void 
+		{
+			infoBar.info = texts[pos];
+			pos++;
+			if (pos > texts.length - 1) pos = 0;
 		}
 		
 		
