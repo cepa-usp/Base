@@ -1,5 +1,6 @@
 package BaseAssets
 {
+	import BaseAssets.components.InfoBar;
 	import BaseAssets.components.MenuBar;
 	import BaseAssets.screens.AboutScreen;
 	import BaseAssets.screens.FeedBackScreen;
@@ -45,6 +46,12 @@ package BaseAssets
 		 */
 		private var hasStats:Boolean = false;
 		
+		private var hasInfoBar:Boolean = true;
+		
+		protected var infoBar:InfoBar;
+		
+		private var rect:Rectangle = new Rectangle(0, 0, 700, 500);
+		
 		/*
 		 * Filtro de conversão para tons de cinza.
 		 */
@@ -74,10 +81,12 @@ package BaseAssets
 		{
 			removeEventListener(Event.ADDED_TO_STAGE, baseInit);
 			
-			scrollRect = new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);
+			scrollRect = rect;
 			
 			criaCamadas();
 			criaTelas();
+			adicionaBotoes();
+			adicionaInfoBar();
 			
 			init();
 		}
@@ -113,7 +122,7 @@ package BaseAssets
 		 */
 		protected function criaTelas():void 
 		{
-			glassPane = new GlassPane(stage.stageWidth, stage.stageHeight);
+			glassPane = new GlassPane(rect.width, rect.height);
 			layerGlass.addChild(glassPane);
 			glassPane.visible = false;
 			
@@ -130,15 +139,14 @@ package BaseAssets
 			}
 			
 			botoes = new MenuBar();
-			botoes.x = stage.stageWidth - botoes.BTN_WIDTH - 10;
-			botoes.y = stage.stageHeight - 10;
+			botoes.x = rect.width - botoes.BTN_WIDTH - 10;
+			botoes.y = rect.height - 10;
 			layerMenu.addChild(botoes);
-			adicionaBotoes();
 			
 			bordaAtividade = new Borda();
 			MovieClip(bordaAtividade).scale9Grid = new Rectangle(20, 20, 610, 460);
-			MovieClip(bordaAtividade).scaleX = stage.stageWidth / 650;
-			MovieClip(bordaAtividade).scaleY = stage.stageHeight / 500;
+			MovieClip(bordaAtividade).scaleX = rect.width / 650;
+			MovieClip(bordaAtividade).scaleY = rect.height / 500;
 			layerBorda.addChild(bordaAtividade);
 		}
 		
@@ -149,6 +157,16 @@ package BaseAssets
 			botoes.addButton(new InstructionBtn(), openOrientacoes, "Orientações");
 			botoes.addButton(new InfoBtn(), iniciaTutorial, "Reiniciar tutorial");
 			if(hasStats) botoes.addButton(new BtStats(), openStats, "Desempenho");
+		}
+		
+		private function adicionaInfoBar():void 
+		{
+			if (hasInfoBar) {
+				infoBar = new InfoBar(rect.width, rect.width - 70);
+				infoBar.y = stage.stageHeight;
+				layerMenu.addChild(infoBar);
+				layerMenu.setChildIndex(infoBar, 0);
+			}
 		}
 		
 		protected function lock(bt:*):void
