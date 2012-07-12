@@ -24,8 +24,9 @@ package
 		public function AtividadeTeste(stagesprite:Sprite) 
 		{
 			super(stagesprite) 
-			eval  = new ProgressiveEvaluator(createPlayInstance);
+			eval  = new ProgressiveEvaluator(createPlayInstance);			
 			var scormAgent = new ScormAgent(this, eval); 
+			
 			this.eventDispatcher.addEventListener(AIConstants.STATE_READY, onStateReady);
 			
 			

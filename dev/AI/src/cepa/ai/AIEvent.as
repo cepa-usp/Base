@@ -10,8 +10,9 @@ package cepa.ai
 	{
 		static public const TUTORIAL_CLICK:String = "tutorialClick";
 		static public const RESET_CLICK:String = "resetClick";
-		static public const STATS_CLICK:String = "statsClick";
 		static public const REQUEST_INITIALIZE:String = "requestInitialize";
+		static public const CREDITS_CLICK:String = "creditsClick";
+		static public const INSTRUCT_CLICK:String = "instructClick";
 		private var _ai:AI;
 		public function AIEvent(type:String, ai:AI, bubbles:Boolean=false, cancelable:Boolean=false) 
 		{ 

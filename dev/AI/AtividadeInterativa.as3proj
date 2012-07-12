@@ -52,6 +52,7 @@
   <libraryPaths>
     <element path="lib\ui.swc" />
     <element path="lib\as3corelib.swc" />
+    <element path="src\cepa\eval\ProgEval.swc" />
   </libraryPaths>
   <!-- External Libraries -->
   <externalLibraryPaths>

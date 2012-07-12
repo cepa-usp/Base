@@ -24,7 +24,6 @@ package cepa.ai
 		
 		private var _container:AIContainer;
 		private var _eventDispatcher:EventDispatcher = new EventDispatcher();
-		private var _evaluator:IEvaluation;
 		private var _state:String = AIConstants.STATE_UNLOADED;
 		
 		private var _debugMode:Boolean = false;
@@ -79,17 +78,6 @@ package cepa.ai
 		}		
 		
 		
-
-		
-		public function get evaluator():IEvaluation 
-		{
-			return _evaluator;
-		}
-		
-		public function set evaluator(value:IEvaluation):void 
-		{
-			_evaluator = value;
-		}
 		
 
 

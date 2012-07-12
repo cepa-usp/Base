@@ -26,6 +26,7 @@
     <library-path append="true">
       <path-element>C:\Documents and Settings\Arthur\Meus documentos\CEPA\GitHub\Base\dev\AI\lib\ui.swc</path-element>
       <path-element>C:\Documents and Settings\Arthur\Meus documentos\CEPA\GitHub\Base\dev\AI\lib\as3corelib.swc</path-element>
+      <path-element>C:\Documents and Settings\Arthur\Meus documentos\CEPA\GitHub\Base\dev\AI\src\cepa\eval\ProgEval.swc</path-element>
     </library-path>
   </compiler>
   <file-specs>

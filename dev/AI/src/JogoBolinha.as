@@ -18,11 +18,11 @@ package
 		private var _stop:Boolean = false;
 		
 		
-		private function init(e:Event = null):void 
-		{
+		//private function init(e:Event = null):void 
+		//{
 			//removeEventListener(Event.ADDED_TO_STAGE, init);
 			//drawGame()			
-		}		
+		//}		
 		
 		public function JogoBolinha() 
 		{
