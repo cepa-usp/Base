@@ -7,9 +7,28 @@ package cepa.ai
 	 */
 	public interface IEvaluation 
 	{
-		function evaluate(playInstance:IPlayInstance);
+		/**
+		 * Sets the current IPlayInstance
+		 * @param	play
+		 */
+		function createNewPlay():void;
+		
+		/**
+		 * Perform evaluation based on current IPlayInstance
+		 */	
+		function evaluate():void;
+		
+		/**
+		 * Marshals evaluator data
+		 * @return
+		 */
 		function getData():Object;
-		function readData(obj:Object);
+		
+		/**
+		 * Unmarshals data from object to evaluator
+		 * @param	obj
+		 */
+		function readData(obj:Object):void;
 	}
 	
 }

@@ -2,6 +2,8 @@ package cepa.eval
 {
 	import cepa.ai.AI;
 	import cepa.ai.AIConstants;
+	import cepa.ai.DefaultEvaluator;
+	import cepa.ai.EvaluatorEvent;
 	import cepa.ai.IEvaluation;
 	import cepa.ai.IPlayInstance;
 	import com.adobe.serialization.json.JSON;
@@ -14,19 +16,24 @@ package cepa.eval
 	
 
 
-	public class ProgressiveEvaluator implements IEvaluation 
+	public class ProgressiveEvaluator extends DefaultEvaluator 
 	{
-		private var _playInstances:Vector.<IPlayInstance> = new Vector.<IPlayInstance>();
+		
 		private var _instancesDetails:Vector.<Object> = new Vector.<Object>();
 		private var _minimumScoreForAcceptance:Number = 0.75;
 		private var _minimumTrialsForParticipScore:int = 5;
-		private var _playmode:int = AIConstants.PLAYMODE_FREEPLAY;
-
-		private var ai:AI;
 		
-		public function ProgressiveEvaluator(ai:AI)
+		private var _playmode:int = AIConstants.PLAYMODE_FREEPLAY;
+		
+		/**
+		 * 
+		 * @param	delegateCreateNewPlay a function which returns any IPlayInstance instance;
+		 */
+		public function ProgressiveEvaluator(delegateCreateNewPlay:Function)
 		{
-			this.ai = ai;
+			super(delegateCreateNewPlay);
+			var o:Object = delegateCreateNewPlay.call();
+			if (!(o is IPlayInstance)) throw Error("delegateCreateNewPlay needs to return an IPlayInstance object");
 		}
 			
 		/**
@@ -53,7 +60,7 @@ package cepa.eval
 
 		}
 		
-
+		
 		/**
 		 * Score mean considering all valid and invalid trials
 		 */
@@ -94,47 +101,38 @@ package cepa.eval
 		 * Depois que um exercício for realizado, ele entrará nessa pilha. Neste momento, o avaliador deverá persistir os dados no scorm
 		 * @param	playInstance 
 		 */
-		public function evaluate(play:IPlayInstance) 
+		override public function evaluate():void
 		{
-			playInstances.push(play);
+			eventDispatcher.dispatchEvent(new EvaluatorEvent(EVALUATION_STARTED, this))
+			playInstances.push(currentPlay);
+			instancesDetails.push({playMode:this._playmode})
+			eventDispatcher.dispatchEvent(new EvaluatorEvent(EVALUATION_FINISHED, this))
 		}
 		
 		/* INTERFACE cepa.ai.IEvaluation */
 		
-		public function getData():Object 
+		override public function getData():Object 
 		{
-			
-			var obj:Object = new Object();			
-			obj.playinstances = new Object();
+			var obj:Object = this.getPlayInstancesData();
 			obj.playinstancesdetails = new Object();
-			obj.length = playInstances.length;
 
 			for (var i:int = 0; i < playInstances.length; i++) {
-				obj.playinstances[String(i)] = playInstances[i].returnAsObject();
 				obj.playinstancesdetails[String(i)] = instancesDetails[i];
 			}
 			return obj;
 		}
 
 		
-		public function readData(obj:Object) 
+		override public function readData(obj:Object):void
 		{
-			this.playInstances = new Vector.<IPlayInstance>();
-			this.instancesDetails = new Vector.<Object>();
-			
+			this.instancesDetails = new Vector.<Object>();		
 			try {
 				var len:int = obj.length;
 				for (var i:int = 0; i < len; i++) {
-					var ply:IPlayInstance = ai.createPlayInstance();
-					ply.bind(obj.playinstances[i.toString()]);
-					playInstances.push(ply);
 					instancesDetails.push(obj.playinstancesdetails[i.toString()]);
 				}				
 			} catch (e:Error) {
-				ai.debugScreen.msg("Não é um objeto")
-				ai.debugScreen.msg(e.getStackTrace())
-				ai.debugScreen.msg(e.message)
-				ai.debugScreen.msg(e.name)
+				
 			}
 			
 		}
@@ -149,15 +147,7 @@ package cepa.eval
 		}
 		
 		
-		public function get playInstances():Vector.<IPlayInstance> 
-		{
-			return _playInstances;
-		}
-		
-		public function set playInstances(value:Vector.<IPlayInstance>):void 
-		{
-			_playInstances = value;
-		}
+
 		
 		public function get minimumScoreForAcceptance():Number 
 		{
@@ -198,6 +188,7 @@ package cepa.eval
 		{
 			_playmode = value;
 		}
+
 		
 	}
 

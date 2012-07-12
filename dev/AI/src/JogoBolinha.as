@@ -12,7 +12,7 @@ package
 	 */
 	public class JogoBolinha extends Sprite 
 	{
-		private var _velocidade:Number = 5;
+		private var _velocidade:Number = 3;
 		private var _epsilon:Number = 0.95;
 		private var ballsize:Number = 50;
 		private var _stop:Boolean = false;
@@ -57,6 +57,8 @@ package
 			}
 			
 		}
+		
+
 		
 		private function onBallClick(e:Event):void 
 		{

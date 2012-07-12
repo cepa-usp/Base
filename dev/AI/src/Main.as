@@ -30,8 +30,6 @@ package
 		{
 			removeEventListener(Event.ADDED_TO_STAGE, init);
 			var ai:AtividadeTeste = new AtividadeTeste(this);
-			var eval:ProgressiveEvaluator = new ProgressiveEvaluator(ai);
-			var scormAgent:ScormAgent = new ScormAgent(ai, eval); 
 			ai.initialize();
 			
 		}

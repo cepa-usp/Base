@@ -26,7 +26,6 @@ package cepa.ai
 		private var _eventDispatcher:EventDispatcher = new EventDispatcher();
 		private var _evaluator:IEvaluation;
 		private var _state:String = AIConstants.STATE_UNLOADED;
-		private var _currentPlay:IPlayInstance = null;
 		
 		private var _debugMode:Boolean = false;
 		private var _debugTutorial:Boolean = false;	
@@ -176,15 +175,6 @@ package cepa.ai
 			_debugScreen = value;
 		}
 		
-		public function get currentPlay():IPlayInstance 
-		{
-			return _currentPlay;
-		}
-		
-		public function set currentPlay(value:IPlayInstance):void 
-		{
-			_currentPlay = value;
-		}
 		
 		
 		
