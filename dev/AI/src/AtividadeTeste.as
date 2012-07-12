@@ -33,8 +33,6 @@ package
 			jogo.addEventListener(JogoEvent.GOOD, onGood);
 			jogo.addEventListener(JogoEvent.BAD, onBad);
 			jogo.addEventListener(JogoEvent.STOPPED, onStopped);
-			container.addChild(jogo);
-			container.addChild(txPontos);
 			txPontos.text = "0";
 			txPontos.selectable = false;
 			txVidas.selectable = false;
@@ -42,10 +40,14 @@ package
 			txPontos.x = 50;
 			txPontos.width = 150;
 			txPontos.y = 50;
-			container.addChild(txVidas);
+			
 			txVidas.x = 50;
 			txVidas.y = 70;
 			txVidas.width = 50;
+
+			container.addChild(jogo);
+			container.addChild(txPontos);
+			container.addChild(txVidas);
 			
 		}
 		

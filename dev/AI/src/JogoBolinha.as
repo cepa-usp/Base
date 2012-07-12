@@ -18,10 +18,51 @@ package
 		private var _stop:Boolean = false;
 		
 		
+		private function init(e:Event = null):void 
+		{
+			//removeEventListener(Event.ADDED_TO_STAGE, init);
+			//drawGame()			
+		}		
+		
 		public function JogoBolinha() 
 		{
+			//if (stage) init();
+			//else addEventListener(Event.ADDED_TO_STAGE, init);
 			
 		}
+
+		
+		public function get velocidade():Number 
+		{
+			return _velocidade;
+		}
+		
+		public function set velocidade(value:Number):void 
+		{
+			_velocidade = value;
+		}
+		
+		public function get stop():Boolean 
+		{
+			return _stop;
+		}
+		
+		public function set stop(value:Boolean):void 
+		{
+			_stop = value;
+		}
+		
+		public function get epsilon():Number 
+		{
+			return _epsilon;
+		}
+		
+		public function set epsilon(value:Number):void 
+		{
+			_epsilon = value;
+		}
+
+		
 
 		public function drawGame() {
 			var b:Sprite = new Sprite();
@@ -74,38 +115,7 @@ package
 				var eee:JogoEvent = new JogoEvent(JogoEvent.STOPPED);
 				dispatchEvent(eee);
 			}
-		}
-		
-		public function get velocidade():Number 
-		{
-			return _velocidade;
-		}
-		
-		public function set velocidade(value:Number):void 
-		{
-			_velocidade = value;
-		}
-		
-		public function get stop():Boolean 
-		{
-			return _stop;
-		}
-		
-		public function set stop(value:Boolean):void 
-		{
-			_stop = value;
-		}
-		
-		public function get epsilon():Number 
-		{
-			return _epsilon;
-		}
-		
-		public function set epsilon(value:Number):void 
-		{
-			_epsilon = value;
-		}
-				
+		}		
 	}
 
 }
