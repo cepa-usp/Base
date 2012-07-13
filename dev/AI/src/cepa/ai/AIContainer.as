@@ -159,6 +159,18 @@ package cepa.ai
 
 			closeScreen2(aboutScreen);
 		}
+		
+		public function createScreen(screen:Sprite) {
+			screen.x = stage.stageWidth/2;
+			screen.y = stage.stageHeight / 2;
+			//screen.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void { closeScreen(screen) } );				
+			layerUI.addChild(screen);
+			layerUI.addChild(border);
+			screen.alpha = 0;
+			screen.visible = false;
+
+			openScreen(screen);
+		}
 		public function setInfoScreen(sprite:Sprite):void {
 			if(infoScreen!=null) layerUI.removeChild(infoScreen);
 			infoScreen = sprite;

@@ -8,6 +8,7 @@ package cepa.eval
 	import cepa.ai.IPlayInstance;
 	import com.adobe.serialization.json.JSON;
 	import com.adobe.serialization.json.JSONEncoder;
+	import flash.events.MouseEvent;
 	
 	/**
 	 * ...
@@ -22,19 +23,46 @@ package cepa.eval
 		private var _instancesDetails:Vector.<Object> = new Vector.<Object>();
 		private var _minimumScoreForAcceptance:Number = 0.75;
 		private var _minimumTrialsForParticipScore:int = 5;
-		
+		private var ai:AI;
 		private var _playmode:int = AIConstants.PLAYMODE_FREEPLAY;
 		
 		/**
 		 * 
 		 * @param	delegateCreateNewPlay a function which returns any IPlayInstance instance;
 		 */
-		public function ProgressiveEvaluator(delegateCreateNewPlay:Function)
+		public function ProgressiveEvaluator(ai:AI, delegateCreateNewPlay:Function)
 		{
 			super(delegateCreateNewPlay);
+			var btStats:BtStats = new BtStats();
+			btStats.addEventListener(MouseEvent.CLICK, onStatsClicked)
+			this.ai = ai;
+			ai.container.menuBar.addButton(btStats, "Estatísticas"); 
 			var o:Object = delegateCreateNewPlay.call();
 			if (!(o is IPlayInstance)) throw Error("delegateCreateNewPlay needs to return an IPlayInstance object");
 		}
+		
+		private function onStatsClicked(e:MouseEvent):void 
+		{
+			var scr:StatsScreen = new StatsScreen();
+			scr.valendoMC.stop();
+			scr.closeButton.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void { ai.container.closeScreen(scr) } );
+			ai.container.createScreen(scr);
+			ai.container.infoBar.info = "tela de estatísticas!"
+			
+			scr.nNaoValendo.text = numTrialsByMode(AIConstants.PLAYMODE_FREEPLAY).toString()
+			scr.nTotal.text = numTrials.toString();
+			scr.scoreValendo.text = score.toString();
+			scr.scoreTotal.text = scoreGeneralMean.toString();
+		//public var nTotal : TextField;
+		//public var nValendo : TextField;
+		//public var scoreMin : TextField;
+		//public var scoreTotal : TextField;
+		//public var scoreValendo : TextField;
+		//public var valendoMC : MovieClip;
+		
+		}
+		
+		
 			
 		/**
 		 * Returns total amount of trials

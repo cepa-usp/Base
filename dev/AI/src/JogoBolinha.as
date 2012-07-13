@@ -64,7 +64,8 @@ package
 
 		
 
-		public function drawGame() {
+		public function drawGame():void {
+			if (stage==null) return;
 			var b:Sprite = new Sprite();
 			b.graphics.beginFill(0x008000);
 			b.graphics.drawCircle(0, 0, ballsize);					

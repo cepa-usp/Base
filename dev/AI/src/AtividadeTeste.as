@@ -24,13 +24,21 @@ package
 		public function AtividadeTeste(stagesprite:Sprite) 
 		{
 			super(stagesprite) 
-			eval  = new ProgressiveEvaluator(createPlayInstance);			
+			eval  = new ProgressiveEvaluator(this, createPlayInstance);			
 			var scormAgent = new ScormAgent(this, eval); 
-			
+			eventDispatcher.addEventListener(AIEvent.RESET_CLICK, onResetClicked);
 			this.eventDispatcher.addEventListener(AIConstants.STATE_READY, onStateReady);
 			
+			//drawGame();
+			
+		}
+		
+		private function drawGame():void 
+		{
+			if (container.getChildByName("jogo") != null)  container.removeChild(container.getChildByName("jogo"));
 			
 			jogo = new JogoBolinha();
+			jogo.name = "jogo"
 			jogo.addEventListener(JogoEvent.GOOD, onGood);
 			jogo.addEventListener(JogoEvent.BAD, onBad);
 			jogo.addEventListener(JogoEvent.STOPPED, onStopped);
@@ -47,9 +55,23 @@ package
 			txVidas.width = 50;
 
 			container.addChild(jogo);
-			container.addChild(txPontos);
-			container.addChild(txVidas);
-			
+			trace(jogo.stage)
+			jogo.addChild(txPontos);
+			jogo.addChild(txVidas);
+		}
+		
+		
+		
+		private function onResetClicked(e:AIEvent):void 
+		{
+			if(jogo!=null){
+				jogo.stop = true;
+				jogo.removeEventListener(JogoEvent.GOOD, onGood);
+				jogo.removeEventListener(JogoEvent.BAD, onBad);
+				jogo.removeEventListener(JogoEvent.STOPPED, onStopped);
+			}
+
+			changeGameState(GAME_CREATINGPLAY);
 		}
 		
 		override public function createPlayInstance():IPlayInstance {
@@ -58,8 +80,6 @@ package
 		
 		private function onStateReady(e:Event):void 
 		{
-			trace("ready")
-			
 			changeGameState(GAME_CREATINGPLAY);
 			
 		}
@@ -98,15 +118,17 @@ package
 		
 		
 		
-		private function changeGameState(vlr:int) {
+		private function changeGameState(vlr:int):void {
 			switch(vlr) {
 				case GAME_CREATINGPLAY:
+					drawGame();
 					playGame();
 					break;
 				case GAME_INTERACTING:
 					break;
 				case GAME_EVALUATING:
 					jogo.stop = true;
+					JogoPlay(eval.currentPlay).pontuacao = pontos;
 					this.eval.evaluate();
 					break;
 			}
@@ -117,6 +139,8 @@ package
 
 		private function playGame():void {
 			jogo.drawGame();
+			vidas = 1;
+			pontos = 0;
 			eval.createNewPlay();
 			changeGameState(GAME_INTERACTING);
 			

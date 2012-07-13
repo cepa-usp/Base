@@ -38,7 +38,7 @@ package
 			ai.eventDispatcher.addEventListener(AIEvent.TUTORIAL_CLICK, faztutorial);
 		}
 		
-		private function faztutorial(e:Event) {
+		private function faztutorial(e:Event):void {
 			var t:Tutorial = new Tutorial();
 			t.adicionarBalao("oiba", new Point(100, 100), 1, 1);
 			t.adicionarBalao("oba", new Point(150, 100), 1, 1);
