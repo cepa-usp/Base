@@ -27,7 +27,7 @@ package cepa.tutorial
 		
 		public function adicionarBalao(texto:String, pos:Point, ladoSeta:int, posicaoSeta:int):CaixaTexto {
 			var balao:CaixaTexto = new CaixaTexto(true);			
-			balao.setText(texto, ladoSeta, posicaoSeta);
+			balao.setText(texto);
 			balao.setPosition(pos.x, pos.y);
 			//balao.addEventListener(Event.CLOSE, closeBalao);			
 			balao.visible = true;

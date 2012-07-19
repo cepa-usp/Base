@@ -21,7 +21,7 @@ package cepa.dao
 		private var debugScreen:Object = new Object();
 		public function ScormAgent(ai:AI, evaluator:ProgressiveEvaluator) 
 		{
-			debugScreen.msg = function(s:String) {
+			debugScreen.msg = function(s:String):void {
 				trace(s);
 			}
 			this.ai = ai;

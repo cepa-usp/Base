@@ -1,5 +1,8 @@
 package cepa.ai
 {
+	import cepa.ai.gui.GlassPane;
+	import cepa.ai.gui.InfoBar;
+	import cepa.ai.gui.MenuBar;
 	import cepa.tooltip.ToolTip;
 	import com.adobe.protocols.dict.Database;
 	import com.eclecticdesignstudio.motion.Actuate;
@@ -23,23 +26,23 @@ package cepa.ai
 		private var layerUI:Sprite = new Sprite();
 		private var ai:AI;
 		private var margin:int = 25;
-		private var _optionButtons:MenuBotoes = new MenuBotoes()
-		private var _messageLabel:TextoExplicativo = new TextoExplicativo();
+		private var glassPane:GlassPane;
+		private var _menuBar:MenuBar;
+		private var _infoBar:InfoBar;
+		private var hasInfoBar:Boolean = true;		
 		private var aboutScreen:Sprite;
 		private var border:Sprite = new Sprite();
 		private var infoScreen:Sprite;
+		private var rect:Rectangle = new Rectangle(0, 0, 700, 500);
 		
 		public function AIContainer(stagesprite:Sprite, ai:AI)
 		{	
 			
 			this.ai = ai;
-			//this.graphics.beginFill(0xFFFFFF);
-			//this.graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
 			stagesprite.addChild(this);
 			this.scrollRect = new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);			
 			createUI();
-			setAboutScreen(new AboutScreenUI());
-			bindMenuButtons();
+			//setAboutScreen(new AboutScreenUI());
 			adjustBorder();
 		}
 		
@@ -52,8 +55,7 @@ package cepa.ai
 				//nada
 				trace(e.getStackTrace());
 			}
-		}
-		
+		}		
 		public function enableComponent(display:*):void {
 			try {
 				display.alpha = 1;
@@ -76,20 +78,77 @@ package cepa.ai
 			border.addChild(b);
 			
 		}
+
+	
+		public function createUI():void {
+			addChild(layerUI);
+			addInfoBar();
+			addMenuBar();
+			
+
+		}		
+
+		public function addMenuBar():void {
+			// exibir mensagem quando passar mouse nos botoes do menu			
+			// mandar reset pros AI.observers.onResetClick e onTutorialClick
+			menuBar = new MenuBar();
+			menuBar.x = rect.width - menuBar.BTN_WIDTH - 10;
+			menuBar.y = rect.height - 10;
+
+			// creditos
+			var creditButton:CreditBtn = new CreditBtn();
+			creditButton.addEventListener(MouseEvent.CLICK, function() {
+				ai.eventDispatcher.dispatchEvent(new AIEvent(AIEvent.CREDITS_CLICK, ai));
+			});
+			creditButton.name = "about";
+			menuBar.addButton(creditButton, "Licença e créditos");
+			setAboutScreen(new AboutScreen())
+			
+			
+			// reset
+			var resetButton:ResetBtn = new ResetBtn();
+			resetButton.addEventListener(MouseEvent.CLICK, function() {
+				ai.eventDispatcher.dispatchEvent(new AIEvent(AIEvent.RESET_CLICK, ai));
+			});						
+			menuBar.addButton(resetButton, "Reiniciar");
+			
+			// instrucoes
+			var instrButton:InstructionBtn = new InstructionBtn();
+			instrButton.addEventListener(MouseEvent.CLICK, function() {
+				ai.eventDispatcher.dispatchEvent(new AIEvent(AIEvent.INSTRUCT_CLICK, ai));
+			});					
+			instrButton.name = "info";
+			menuBar.addButton(instrButton, "Orientações");
+			
+
+
+			// tutorial
+			var tutButton:InfoBtn = new InfoBtn();
+			tutButton.addEventListener(MouseEvent.CLICK, function() {
+				ai.eventDispatcher.dispatchEvent(new AIEvent(AIEvent.TUTORIAL_CLICK, ai));
+			});
+			menuBar.addButton(tutButton, "Reiniciar tutorial");
+			layerUI.addChild(menuBar);
+
+		}
+		
+
+		private function addInfoBar():void 
+		{
+			if (hasInfoBar) {
+				infoBar = new InfoBar(rect.width, rect.width - 70);
+				infoBar.y = stage.stageHeight;
+				layerUI.addChild(infoBar);
+			}
+		}		
 		
 		public function setAboutScreen(sprite:Sprite):void {
 			if(aboutScreen!=null) layerUI.removeChild(aboutScreen);
 			aboutScreen = sprite;
-//			var bt:CloseButton = new CloseButton();
-			//aboutScreen.addChild(bt);
 			aboutScreen.x = stage.stageWidth/2;
 			aboutScreen.y = stage.stageHeight / 2;
-//			aboutScreen.scaleX = aboutScreen.width / stage.stageWidth
-			//aboutScreen.scaleY
-			//bt.x = aboutScreen.width - 30;
-			//bt.y = 30;
 			aboutScreen.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void { closeScreen(aboutScreen) } );				
-			optionButtons.btCreditos.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void {
+			menuBar.getButton("about").addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void {
 				openScreen(aboutScreen);
 			});
 			
@@ -100,6 +159,18 @@ package cepa.ai
 
 			closeScreen2(aboutScreen);
 		}
+		
+		public function createScreen(screen:Sprite) {
+			screen.x = stage.stageWidth/2;
+			screen.y = stage.stageHeight / 2;
+			//screen.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void { closeScreen(screen) } );				
+			layerUI.addChild(screen);
+			layerUI.addChild(border);
+			screen.alpha = 0;
+			screen.visible = false;
+
+			openScreen(screen);
+		}
 		public function setInfoScreen(sprite:Sprite):void {
 			if(infoScreen!=null) layerUI.removeChild(infoScreen);
 			infoScreen = sprite;
@@ -108,7 +179,8 @@ package cepa.ai
 			bt.x = infoScreen.width - 30;
 			bt.y = 30;
 			infoScreen.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void{closeScreen(infoScreen)});	
-			optionButtons.btOrientacoes.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void {
+			
+			menuBar.getButton("info").addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void {
 				openScreen(infoScreen);
 			});
 			layerUI.addChild(infoScreen);
@@ -149,36 +221,7 @@ package cepa.ai
 			Actuate.tween(spriteScreen, 0.6, { alpha:1, scaleX:(stage.stageWidth/w), scaleY:(stage.stageHeight/h) } );
 		}
 
-		
-		public function createUI():void {
-			addChild(layerUI);
-			// prepare message label
-			//messageLabel.scrollRect = 
-			messageLabel.width = stage.stageWidth;
-			layerUI.addChild(messageLabel);
-			messageLabel.x = 0;
-			messageLabel.y = stage.stageHeight - messageLabel.height - 17;
-			
-			setMessageTextValue(" teste de texto");
-			
-			// prepare option buttons
-			layerUI.addChild(optionButtons);
-			optionButtons.filters = [AIConstants.SHADOW_FILTER];
-			optionButtons.x = stage.stageWidth - margin - optionButtons.width;
-			optionButtons.y = stage.stageHeight - margin - optionButtons.height;			
-			makeButton(optionButtons.btTutorial);
-			makeButton(optionButtons.btStatistics);
-			addTooltip(optionButtons.btStatistics, "Estatísticas");
-			addTooltip(optionButtons.btTutorial, "Tutorial")
-			makeButton(optionButtons.btReset);
-			addTooltip(optionButtons.btReset, "Reset")
-			makeButton(optionButtons.btOrientacoes);
-			addTooltip(optionButtons.btOrientacoes, "Orientações");
-			
-			makeButton(optionButtons.btCreditos);
-			addTooltip(optionButtons.btCreditos, "Créditos");
-			
-		}
+	
 		
 		private function addTooltip(spr:Sprite, tx:String) {
 			new ToolTip(spr, tx);
@@ -194,75 +237,51 @@ package cepa.ai
 			spr.addEventListener(MouseEvent.MOUSE_OUT, unHighlightButton);
 		}
 		
-		private function unHighlightButton(e:MouseEvent):void 
-		{
+		private function unHighlightButton(e:MouseEvent):void 		{
 			Actuate.tween(e.target, 0.4, { scaleX:1.0, scaleY:1.0 } );
 		}
 		
-		private function highlightButton(e:MouseEvent):void 
-		{
+		private function highlightButton(e:MouseEvent):void 		{
 			Actuate.tween(e.target, 0.4, {scaleX:1.2, scaleY:1.2 });
 		}
 		
-		public function bindMenuButtons():void {
-			// exibir mensagem quando passar mouse nos botoes do menu
-			
-			// mandar reset pros AI.observers.onResetClick e onTutorialClick
-			optionButtons.btTutorial.addEventListener(MouseEvent.CLICK, function() {
-				ai.eventDispatcher.dispatchEvent(new AIEvent(AIEvent.TUTORIAL_CLICK, ai));
-			});
-			optionButtons.btReset.addEventListener(MouseEvent.CLICK, function() {
-				ai.eventDispatcher.dispatchEvent(new AIEvent(AIEvent.RESET_CLICK, ai));
-			});
-			optionButtons.btStatistics.addEventListener(MouseEvent.CLICK, function() {
-				ai.eventDispatcher.dispatchEvent(new AIEvent(AIEvent.STATS_CLICK, ai));
-			});
-		}
+
 		
 		
 		
-		
-		public function setMessageTextValue(tx:String):void {
-			messageLabel.texto.text = tx;
-		}
-		
-		public function setMessageTextVisible(value:Boolean):void {
-			Actuate.tween(optionButtons, 0.8, { y:(value?this.height:0)});
-		}
+
 		
 		public function setOptionsMenuVisible(value:Boolean):void {
-			Actuate.tween(optionButtons, 0.8, { alpha:(value?(this.height - messageLabel.height):this.height)});
+			Actuate.tween(menuBar, 0.8, { alpha:(value?(this.height - infoBar.height):this.height)});
 		}
 		
 		override public function addChild(child:DisplayObject):DisplayObject 
 		{			
-			//if (child is AIObserver) {
-				//ai.addObserver(AIObserver(child));
-			//}
 			var c:DisplayObject =  super.addChild(child);
 			setChildIndex(layerUI, numChildren - 1);
 			return c;
 		}
 		
-		public function get messageLabel():TextoExplicativo 
+		public function get menuBar():MenuBar 
 		{
-			return _messageLabel;
+			return _menuBar;
 		}
 		
-		public function set messageLabel(value:TextoExplicativo):void 
+		public function set menuBar(value:MenuBar):void 
 		{
-			_messageLabel = value;
+			_menuBar = value;
 		}
 		
-		public function get optionButtons():MenuBotoes 
+		public function get infoBar():InfoBar 
 		{
-			return _optionButtons;
+			return _infoBar;
 		}
 		
-		public function set optionButtons(value:MenuBotoes):void 
+		public function set infoBar(value:InfoBar):void 
 		{
-			_optionButtons = value;
+			_infoBar = value;
 		}
+
 
 	}
 

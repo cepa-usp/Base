@@ -7,7 +7,7 @@ package
 	 */
 	public class JogoPlay implements IPlayInstance
 	{
-		private var pontuacao:int = 0;
+		private var _pontuacao:int = 0;
 		public function JogoPlay() 
 		{
 			
@@ -38,6 +38,16 @@ package
 		public function evaluate():void 
 		{
 			//nada
+		}
+		
+		public function get pontuacao():int 
+		{
+			return _pontuacao;
+		}
+		
+		public function set pontuacao(value:int):void 
+		{
+			_pontuacao = value;
 		}
 		
 	}
