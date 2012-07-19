@@ -26,6 +26,7 @@ package BaseAssets.components
 			
 			createTexto();
 			createBackground();
+			this.visible = false;
 		}
 		
 		private function createTexto():void 
@@ -62,6 +63,8 @@ package BaseAssets.components
 			texto.text = info;
 			texto.y = -BORDER - texto.textHeight;
 			createBackground();
+			if (info == "") this.visible = false;
+			else this.visible = true;
 		}
 		
 		public function set textFormat(tf:TextFormat):void

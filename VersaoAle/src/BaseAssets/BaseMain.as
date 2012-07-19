@@ -50,7 +50,7 @@ package BaseAssets
 		
 		protected var infoBar:InfoBar;
 		
-		private var rect:Rectangle = new Rectangle(0, 0, 700, 500);
+		private var rect:Rectangle = new Rectangle(0, 0, 700, 350);
 		
 		/*
 		 * Filtro de conversão para tons de cinza.
@@ -68,6 +68,7 @@ package BaseAssets
 		private var layerDialogo:Sprite;
 		private var layerGlass:Sprite;
 		protected var layerTuto:Sprite;
+		private var layerBlock:Sprite;
 		private var layerMenu:Sprite;
 		private var layerAtividade:Sprite;
 		
@@ -105,11 +106,18 @@ package BaseAssets
 			layerDialogo = new Sprite();
 			layerGlass = new Sprite();
 			layerTuto = new Sprite();
+			layerBlock = new Sprite();
 			layerMenu = new Sprite();
 			layerAtividade = new Sprite();
 			
+			layerBlock.name = "block";
+			layerBlock.graphics.beginFill(0xFFFFFF, 0);
+			layerBlock.graphics.drawRect(0, 0, rect.width, rect.height);
+			layerBlock.visible = false;
+			
 			super.addChild(layerAtividade);
 			super.addChild(layerMenu);
+			super.addChild(layerBlock);
 			super.addChild(layerTuto);
 			super.addChild(layerGlass);
 			super.addChild(layerDialogo);
@@ -139,8 +147,8 @@ package BaseAssets
 			}
 			
 			botoes = new MenuBar();
-			botoes.x = rect.width - botoes.BTN_WIDTH - 10;
-			botoes.y = rect.height - 10;
+			botoes.x = rect.width - botoes.BTN_WIDTH - 12;
+			botoes.y = rect.height - 15;
 			layerMenu.addChild(botoes);
 			
 			bordaAtividade = new Borda();
@@ -163,7 +171,7 @@ package BaseAssets
 		{
 			if (hasInfoBar) {
 				infoBar = new InfoBar(rect.width, rect.width - 70);
-				infoBar.y = stage.stageHeight;
+				infoBar.y = rect.height;
 				layerMenu.addChild(infoBar);
 				layerMenu.setChildIndex(infoBar, 0);
 			}
@@ -181,6 +189,16 @@ package BaseAssets
 			bt.filters = [];
 			bt.alpha = 1;
 			bt.mouseEnabled = true;
+		}
+		
+		protected function blockAI():void
+		{
+			layerBlock.visible = true;
+		}
+		
+		protected function unblockAI():void
+		{
+			layerBlock.visible = false;
 		}
 		
 		/**

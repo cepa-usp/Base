@@ -1,5 +1,9 @@
 package BaseAssets.tutorial
 {
+	import BaseAssets.events.BaseEvent;
+	import com.eclecticdesignstudio.motion.Actuate;
+	import com.eclecticdesignstudio.motion.easing.Elastic;
+	import com.eclecticdesignstudio.motion.easing.Linear;
 	import flash.display.SimpleButton;
 	import flash.display.Sprite;
 	import flash.display.Stage;
@@ -48,13 +52,16 @@ package BaseAssets.tutorial
 		private var currentWidth:Number = 200;
 		private var minWidth:Number;
 		
+		private var normalGlow:GlowFilter = new GlowFilter(0x000000, 0.5, 6, 6, 2, 2);
+		private var errorGlow:GlowFilter = new GlowFilter(0xFF0000, 1, 6, 6, 2, 2);
+		
 		public function CaixaTexto(roundCorner:Boolean = false)
 		{
 			this.visible = false;
 			this.roundCorner = roundCorner;
 			background = new Sprite();
 			addChild(background);
-			background.filters = [new GlowFilter(0x000000, 0.5, 6, 6, 2, 2)];
+			background.filters = [normalGlow];
 			
 			texto = new TextField();
 			texto.defaultTextFormat = new TextFormat("arial", 12, 0x000000, null, null, null, null, null, TextFormatAlign.JUSTIFY);
@@ -77,18 +84,63 @@ package BaseAssets.tutorial
 			if (roundCorner) minWidth = nextButton.width;
 			else minWidth = nextButton.width - 2 * marginText + 2;
 			
-			addEventListener(MouseEvent.MOUSE_DOWN, clickHandler);
+			if (stage) stage.addEventListener(MouseEvent.MOUSE_DOWN, clickHandler);
+			else addEventListener(Event.ADDED_TO_STAGE, addListener);
+			
+			this.filters = [new GlowFilter(0xFF0000, 0, 1, 1)];
+		}
+		
+		private function addListener(e:Event):void 
+		{
+			removeEventListener(Event.ADDED_TO_STAGE, addListener);
+			stage.addEventListener(MouseEvent.MOUSE_DOWN, clickHandler);
 		}
 		
 		private function clickHandler(e:MouseEvent):void 
 		{
-			//trace("clicou em: " + e.target);
+			//trace("clicou em: " + e.target.name);
 			if (e.target == nextButton) {
 				this.visible = false;
-				dispatchEvent(new Event(Event.CLOSE));
+				dispatchEvent(new BaseEvent(BaseEvent.NEXT_BALAO));
 			}else if (e.target == closeButton) {
 				this.visible = false;
+				dispatchEvent(new BaseEvent(BaseEvent.CLOSE_BALAO));
+			}else if (e.target.name == "block") {
+				Actuate.stop(background);
+				background.filters = [errorGlow];
+				//Actuate.tween(this, 0.2, { scaleX: 1.2, scaleY:1.2 } ).onComplete(backToNormal).ease(Elastic.easeIn);
+				Actuate.effects(background, 0.1).filter(0, { color:0xFFFFFF}).ease(Linear.easeNone).onComplete(backToNormal);
 			}
+		}
+		
+		private function backToNormal():void 
+		{
+			//Actuate.tween(this, 0.2, { scaleX:1, scaleY:1 } ).ease(Elastic.easeOut);
+			Actuate.effects(background, 0.1).filter(0, { color:0xFF0000} ).ease(Linear.easeNone).onComplete(backToNormal2);
+		}
+		
+		private function backToNormal2():void 
+		{
+			//Actuate.tween(this, 0.2, { scaleX:1, scaleY:1 } ).ease(Elastic.easeOut);
+			Actuate.effects(background, 0.1).filter(0, { color:0xFFFFFF} ).ease(Linear.easeNone).onComplete(backToNormal3);
+		}
+		
+		private function backToNormal3():void 
+		{
+			//Actuate.tween(this, 0.2, { scaleX:1, scaleY:1 } ).ease(Elastic.easeOut);
+			Actuate.effects(background, 0.1).filter(0, { color:0xFF0000} ).ease(Linear.easeNone).onComplete(back2);
+		}
+		
+		private function back2():void 
+		{
+			Actuate.stop(background);
+			Actuate.timer(0.001).onComplete(back3);
+			//background.filters = [normalGlow];
+		}
+		
+		private function back3():void 
+		{
+			background.filters = [normalGlow];
 		}
 		
 		public function setText(text:String, side:String = null, align:String = null, width:Number = 200):void
