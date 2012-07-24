@@ -62,6 +62,16 @@ package BaseAssets
 			0.0000, 0.0000, 0.0000, 1, 0
 		]);
 		
+		/*
+		 * Filtro de conversão para tons de cinza.
+		 */
+		protected const GRAYSCALE_FILTER_BLOCK:ColorMatrixFilter = new ColorMatrixFilter([
+			0.2225, 0.7169, 0.0606, 0, 0,
+			0.2225, 0.7169, 0.0606, 0, 0,
+			0.2225, 0.7169, 0.0606, 0, 0,
+			0.0000, 0.0000, 0.0000, 1, 0
+		]);
+		
 		//Camadas:
 		private var layerBorda:Sprite;
 		private var layerDebug:Sprite;
@@ -148,7 +158,7 @@ package BaseAssets
 			
 			botoes = new MenuBar();
 			botoes.x = rect.width - botoes.BTN_WIDTH - 12;
-			botoes.y = rect.height - 15;
+			botoes.y = rect.height - 12;
 			layerMenu.addChild(botoes);
 			
 			bordaAtividade = new Borda();
@@ -194,11 +204,23 @@ package BaseAssets
 		protected function blockAI():void
 		{
 			layerBlock.visible = true;
+			
+			//layerMenu.filters = [GRAYSCALE_FILTER_BLOCK];
+			//layerAtividade.filters = [GRAYSCALE_FILTER_BLOCK];
+			
+			layerMenu.alpha = 0.5;
+			layerAtividade.alpha = 0.5;
 		}
 		
 		protected function unblockAI():void
 		{
 			layerBlock.visible = false;
+			
+			//layerMenu.filters = [];
+			//layerAtividade.filters = [];
+			
+			layerMenu.alpha = 1;
+			layerAtividade.alpha = 1;
 		}
 		
 		/**
